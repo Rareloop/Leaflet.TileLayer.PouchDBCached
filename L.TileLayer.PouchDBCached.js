@@ -144,12 +144,13 @@ L.TileLayer.include({
 			var northEastPoint = this._map.project(bbox.getNorthEast(),z);
 			var southWestPoint = this._map.project(bbox.getSouthWest(),z);
 
-			// Calculate tile indexes as per L.TileLayer._update and
-			//   L.TileLayer._addTilesFromCenterOut
-			var tileSize   = this._getTileSize();
-			var tileBounds = L.bounds(
-				northEastPoint.divideBy(tileSize)._floor(),
-				southWestPoint.divideBy(tileSize)._floor());
+
+            // Calculate tile indexes as per L.TileLayer._update and
+            //   L.TileLayer._addTilesFromCenterOut
+            var tileSize   = this._getTileSize();
+            var tileBounds = L.bounds(
+                northEastPoint.divideBy(tileSize)._floor(),
+                southWestPoint.divideBy(tileSize)._floor());
 
 			for (var j = tileBounds.min.y; j <= tileBounds.max.y; j++) {
 				for (var i = tileBounds.min.x; i <= tileBounds.max.x; i++) {
@@ -192,11 +193,16 @@ L.TileLayer.include({
 
 		this._db.get(url, function(err,data){
 			if (!data) {
-				/// FIXME: Do something on tile error!!
 				tile.onload = function(ev){
 					this._saveTile(url)(ev);
 					this._seedOneTile(tile, remaining, seedData);
 				}.bind(this);
+
+                // Skip the tile if there was an error loading it
+                tile.onerror = function(ev) {
+                    this._seedOneTile(tile, remaining, seedData);
+                }.bind(this);
+
 				tile.crossOrigin = 'Anonymous';
 				tile.src = url;
 			} else {
