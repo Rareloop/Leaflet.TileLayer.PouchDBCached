@@ -21,6 +21,7 @@
   ],
   "dependencies": {
     "leaflet": "~0.7.3",
-    "pouchdb": "~3.3.1"
+    "pouchdb": "~3.3.1",
+    "Leaflet.TileLayer.PouchDBCached": "0.1.0"
   }
 }
