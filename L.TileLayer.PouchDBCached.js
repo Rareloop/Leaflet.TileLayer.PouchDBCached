@@ -170,7 +170,12 @@ L.TileLayer.include({
 		this.fire('seedstart', seedData);
 		var tile = this._createTile();
 		tile._layer = this;
+        	this.seedCancelled = false;
 		this._seedOneTile(tile, queue, seedData);
+	},
+
+	cancelSeed: function() {
+	        this.seedCancelled = true;
 	},
 
 	// Uses a defined tile to eat through one item in the queue and
@@ -181,6 +186,12 @@ L.TileLayer.include({
 			this.fire('seedend', seedData);
 			return;
 		}
+
+	        if (this.seedCancelled) {
+	            this.fire('seedcancelled', seedData);
+	            return;
+	        }
+
 		this.fire('seedprogress', {
 			bbox:    seedData.bbox,
 			minZoom: seedData.minZoom,
